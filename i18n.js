@@ -25,7 +25,7 @@
           async: false,
           dataType: 'json'
         });
-      };
+      },
   
       getLocaleFileFromServer: function(){
         var _this = this;
