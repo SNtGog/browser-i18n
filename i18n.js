@@ -4,8 +4,7 @@
       for (var prop in options) {
           this[prop] = options[prop];
       };
-  
-      return this.getLocaleFileFromServer();
+      return getLocaleFileFromServer();
   };
   
   I18n.localeCache = {};
@@ -14,37 +13,46 @@
       defaultLocale: "en",
       directory: "/locales",
       extension: ".json",
+      
+      setLocale: function(locale) {
+        this.locale = locale;
+        if (!I18n.localeCache.get(locale)) {
+          this.getLocaleFileFromServer(locale);
+        }
+        return this;
+      },
   
       getLocale: function(){
           return this.locale || navigator.language;
       },
       
       _getLocaleFileFromServer: function(locale) {
-        return $.ajax({
+        var response;
+        $.ajax({
           url: this.directory + "/" + locale + this.extension,
+          dataType: 'json',
           async: false,
-          dataType: 'json'
-        });
+          success: function( data ) {
+            response = data
+          },
+          error: function( data ) {
+            response = null;
+          }
+        }); 
+        return response
       },
   
       getLocaleFileFromServer: function(){
         var _this = this;
         var locale = _this.getLocale();
-        _this._getLocaleFileFromServer(locale)
-          .done(function(res) {
-            I18n.localeCache[_this.locale] = res;
-            deferred.resolve();
-          })
-          .fail(function() {
-            return _this._getLocaleFileFromServer(_this.defaultLocale);
-          })
-          .done(function(res) {
-            _this.locale = _this.defaultLocale
-            I18n.localeCache[_this.locale] = res;
-          })
-          .fail(function(res) {
-            throw res;
-          });
+        var localeFile = _this._getLocaleFileFromServer(locale)
+        
+        if (!localeFile) {
+          _this.locale = _this.defaultLocale;
+          localeFile = _this._getLocaleFileFromServer(_this.defaultLocale);
+        }
+        
+        I18n.localeCache[_this.locale] = localeFile;
         return this;
       },
   
