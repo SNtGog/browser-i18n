@@ -4,7 +4,7 @@
       for (var prop in options) {
           this[prop] = options[prop];
       };
-      return getLocaleFileFromServer();
+      return this.getLocaleFileFromServer();
   };
   
   I18n.localeCache = {};
