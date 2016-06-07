@@ -1,6 +1,6 @@
-(function init(object) {
+(function init(global) {
 
-  var I18n = object.I18n = function(options){
+  var I18n = global.I18n = function(options){
       for (var prop in options) {
           this[prop] = options[prop];
       };
@@ -23,7 +23,7 @@
       },
   
       getLocale: function(){
-          return this.locale || navigator.language;
+          return navigator.language;
       },
       
       _getLocaleFileFromServer: function(locale) {
@@ -44,8 +44,8 @@
   
       getLocaleFileFromServer: function(){
         var _this = this;
-        var locale = _this.getLocale();
-        var localeFile = _this._getLocaleFileFromServer(locale)
+        this.locale = this.locale || this.getLocale();
+        var localeFile = _this._getLocaleFileFromServer(this.locale)
         
         if (!localeFile) {
           _this.locale = _this.defaultLocale;
