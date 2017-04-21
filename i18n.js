@@ -31,7 +31,7 @@
         $.ajax({
           url: this.directory + "/" + locale + this.extension,
           dataType: 'json',
-          async: false,
+          async: true,
           success: function( data ) {
             response = data
           },
@@ -45,7 +45,7 @@
       getLocaleFileFromServer: function(){
         var _this = this;
         this.locale = this.locale || this.getLocale();
-        var localeFile = _this._getLocaleFileFromServer(this.locale)
+        var localeFile = this._getLocaleFileFromServer(this.locale)
         
         if (!localeFile) {
           _this.locale = _this.defaultLocale;
