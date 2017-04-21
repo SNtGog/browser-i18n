@@ -27,13 +27,11 @@
       },
       
       _getLocaleFileFromServer: function(locale) {
-        var xhr;
-        $.ajax({
+        return $.ajax({
           url: this.directory + "/" + locale + this.extension,
           dataType: 'json',
           async: true
-        }); 
-        return xhr;
+        });
       },
   
       getLocaleFileFromServer: function() {
@@ -54,7 +52,7 @@
                 deferred.resolve(_this);
               })
               .fail(function(res) {
-                deferred.reject(res);
+                deferred.reject(_this);
               });
           });
 
