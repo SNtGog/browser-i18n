@@ -27,33 +27,38 @@
       },
       
       _getLocaleFileFromServer: function(locale) {
-        var response;
+        var xhr;
         $.ajax({
           url: this.directory + "/" + locale + this.extension,
           dataType: 'json',
-          async: true,
-          success: function( data ) {
-            response = data
-          },
-          error: function( data ) {
-            response = null;
-          }
+          async: true
         }); 
-        return response
+        return xhr;
       },
   
-      getLocaleFileFromServer: function(){
-        var _this = this;
+      getLocaleFileFromServer: function() {
+        var _this = this,
+            deferred = $.Deferred();
+
         this.locale = this.locale || this.getLocale();
-        var localeFile = this._getLocaleFileFromServer(this.locale)
-        
-        if (!localeFile) {
-          _this.locale = _this.defaultLocale;
-          localeFile = _this._getLocaleFileFromServer(_this.defaultLocale);
-        }
-        
-        I18n.localeCache[_this.locale] = localeFile;
-        return this;
+        this._getLocaleFileFromServer(this.locale)
+          .done(function(localeFile) {
+            I18n.localeCache[_this.locale] = localeFile;
+            deferred.resolve(_this);
+          })
+          .fail(function(res) {
+            _this.locale = _this.defaultLocale;
+            localeFile = _this._getLocaleFileFromServer(_this.defaultLocale)
+              .done(function(localeFile) {
+                I18n.localeCache[_this.locale] = localeFile;
+                deferred.resolve(_this);
+              })
+              .fail(function(res) {
+                deferred.reject(res);
+              });
+          });
+
+        return deferred;
       },
   
       __: function(){
