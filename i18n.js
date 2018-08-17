@@ -1,6 +1,23 @@
-(function init(global) {
+(function(factory) {
 
-  var I18n = global.I18n = function(options){
+  var root = (typeof self == 'object' && self.self === self && self) ||
+            (typeof global == 'object' && global.global === global && global);
+
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery', 'exports'], function($, exports) {
+      root.I18n = factory(root, exports, $);
+    });
+  } else if (typeof exports !== 'undefined') {
+    var $;
+    try { $ = require('jquery'); } catch (e) {}
+    factory(root, exports, $);
+  } else {
+    root.I18n = factory(root, {}, (root.jQuery || root.Zepto || root.ender || root.$));
+  }
+
+})(function(root, I18n, $) {
+
+  var I18n = function(options){
       for (var prop in options) {
           this[prop] = options[prop];
       };
@@ -85,5 +102,6 @@
           return msg;
       }
   };
-
-}(window));
+  
+  return I18n;
+});
