@@ -18,7 +18,7 @@
       // But always support CommonJS module 1.1.1 spec (`exports` cannot be a function)
       exports.I18n = factory($);
   } else {
-      global.I18n = factory(root.jQuery || root.Zepto || root.ender || root.$);
+      root.I18n = factory(root.jQuery || root.Zepto || root.ender || root.$);
   }
 
 })(function($) {
